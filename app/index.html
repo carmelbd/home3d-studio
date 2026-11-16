@@ -283,6 +283,8 @@ body.view #palette,body.view #props,body.view .ed{display:none!important}
       <button data-menu="open">📂 Open design file…</button>
       <button data-menu="example">🏡 Load example home</button>
       <button data-menu="empty">⬜ Start from empty floors</button>
+      <button data-menu="hd">✨ HD quality: <b id="hdAllowL">allowed</b></button>
+      <button data-menu="hdbtn">✨ HD button in 3D: <b id="hdBtnL">shown</b></button>
     </div></details>
   </div>
 </header>
@@ -290,7 +292,7 @@ body.view #palette,body.view #props,body.view .ed{display:none!important}
   <aside id="palette"><div class="psearch"><input id="pq" type="search" placeholder="🔍 Search products…" autocomplete="off" spellcheck="false"></div><div id="pal"></div><p id="pnone" class="muted" hidden>Nothing matches. Try another word.</p></aside>
   <section id="stage"><div id="hint"></div><svg id="plan" xmlns="http://www.w3.org/2000/svg"></svg><div class="zbar" id="zbar"><button data-z="out" title="Zoom out">−</button><button data-z="in" title="Zoom in">+</button><button data-z="fit" title="Show the whole floor">Fit</button></div>
     <div id="v3" hidden><div id="v3err" hidden>The 3D engine could not load. Check your internet connection and reload the page.</div>
-      <div class="v3bar" id="v3bar"><button data-v3="floor">This floor</button><button data-v3="all">Whole house</button><button data-v3="full">Full-height walls</button><button data-v3="explode">↕ Explode</button><button data-v3="night">🌙 Night</button><button data-v3="lights">💡 All lights</button><button data-v3="reset">Reset view</button><button data-hq title="High-quality realistic rendering. Turn off if 3D feels slow.">✨ HD</button></div></div>
+      <div class="v3bar" id="v3bar"><button data-v3="floor">This floor</button><button data-v3="all">Whole house</button><button data-v3="full">Full-height walls</button><button data-v3="explode">↕ Explode</button><button data-v3="night">🌙 Night</button><button data-v3="lights">💡 All lights</button><button data-v3="reset">Reset view</button><button id="hqBtn" title="HD: sharper textures, finer shadows and soft shading in corners. Heavier on slow devices.">✨ HD</button></div></div>
   <div id="rv" hidden></div>
   <div id="wall" hidden><div class="wz" data-pos="tl"></div><div class="wz" data-pos="tc"></div><div class="wz" data-pos="tr"></div><div class="wz" data-pos="bl"></div><div class="wz" data-pos="bc"></div><div class="wz" data-pos="br"></div></div>
     <div class="wbar off" id="wallBar" hidden><button data-w="v2d">2D</button><button data-w="v3d">3D</button><button data-w="vrooms">▦ Rooms</button><button data-w="all">🏠 Whole house</button><button data-w="night">🌙 Night</button><button data-w="lights">💡 All lights</button><button data-w="reset">⟲ Reset view</button><button data-w="set">⚙ Settings</button><button data-w="exit">✕ Exit</button></div>
@@ -346,11 +348,6 @@ body.view #palette,body.view #props,body.view .ed{display:none!important}
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/RoundedBoxGeometry.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/SSAOShader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/math/SimplexNoise.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/SSAOPass.js"></script>
 <script>
 'use strict';
 const KEY='home3d-studio-v1',K=100,ACCENT='#2f6fed',H_CUT=1.2;
@@ -650,7 +647,9 @@ function floorTexture(k){
 }
 floorTexture.c={};
 /* real photo textures (CC0 from Poly Haven): [name, size in m, planks run along v]. Until they load, or if offline, the drawn texture is used */
-const HQ=(()=>{try{return localStorage.getItem('home3d-hq')!=='0'}catch(e){return true}})(),FINE=matchMedia('(pointer:fine)').matches,TQ=HQ&&FINE?'2k':'1k',FQ=HQ?(FINE?4:2):1;const PH='https://dl.polyhaven.org/file/ph-assets/Textures/jpg/'+TQ+'/';
+/* HD quality: HQ on/off, TQ photo texture size, FQ drawn-floor texture scale. HD_DEF is the default when the device never chose (the Studio build sets it on) */
+const HD_DEF=true;
+let HQ=false,TQ='1k',FQ=1,PH='https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/';
 const PHOTO={wood:['laminate_floor_03',2.08,1],wood_dark:['wood_floor',1.7,1],herringbone:['herringbone_parquet',3.4],concrete:['plastered_wall_04',3.2],
   deck:['wood_floor_deck',1.8],deck_grey:['wood_planks_grey',1.5,1],pavers:['large_grey_tiles',3],pebbles:['clean_pebbles',2],grass:['leafy_grass',2]};
 function repTex(t){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=HQ?16:8;return t}
@@ -1202,6 +1201,7 @@ const curP=()=>{const t=document.documentElement.dataset.theme;return PAL[t?t:(m
 
 function load(){try{const s=localStorage.getItem(KEY);if(s){const d=JSON.parse(s);if(d&&Array.isArray(d.floors)&&d.floors.length)return normalize(d)}}catch(e){}return null}
 function normalize(d){d.title=d.title||'My Home';d.entities=Array.isArray(d.entities)?d.entities:[];d.look=Object.assign({wall:''},d.look||{});
+  d.hd=Object.assign({allow:true,button:true},d.hd||{});
   d.rooms=Object.assign({hide:[],hideRooms:[],lights:true,count:true,empty:true,cams:true},d.rooms||{});
   d.export=Object.assign({mode:'3d',theme:'dark',walls:'cut',angle:'front',btn:'builtin',prefix:'/local/floorplan/',area:true},d.export||{});
   for(const f of d.floors){f.id=f.id||uid();f.rooms=f.rooms||[];f.items=(f.items||[]).filter(i=>FURN[i.kind]);f.devices=(f.devices||[]).filter(x=>DEV[x.kind]);f.w=+f.w||16;f.h=+f.h||11;f.ch=+f.ch||2.7}return d}
@@ -1425,7 +1425,7 @@ function renderPlan(){
   $('#hint').textContent=h;
 }
 function refreshViews(){renderPlan();if(ui.view==='3d')render3DView();if(ui.view==='rooms')renderRooms()}
-function renderTabs(){
+function renderTabs(){hdSync();
   $('#tabs').innerHTML=doc.floors.map((f,i)=>`<button data-floor="${i}" class="${i===ui.floor?'active':''}" title="Double-click to rename">${esc(f.name)}</button>`).join('')+`<button data-floor="add" class="ed" title="Add a floor">＋ Floor</button>`;
   $('#undoBtn').disabled=!undoS.length;$('#redoBtn').disabled=!redoS.length;
   $('#previewBtn').classList.toggle('on',ui.preview);$('#previewBtn').hidden=ui.view!=='2d';
@@ -1705,6 +1705,8 @@ document.querySelector('details.menu').addEventListener('click',e=>{
   const b=e.target.closest('[data-menu]');if(!b)return;e.currentTarget.open=false;const m=b.dataset.menu;
   if(m==='save')download(`${slug(doc.title)||'home'}-floorplan.json`,JSON.stringify(doc,null,2),'application/json');
   else if(m==='open')$('#fileIn').click();
+  else if(m==='hd'){mutate(()=>{doc.hd=Object.assign({allow:true,button:true},doc.hd);doc.hd.allow=!doc.hd.allow});flash(doc.hd.allow?'HD quality allowed. Turn it on with ✨ HD in the 3D view':'HD quality disabled on every device')}
+  else if(m==='hdbtn')mutate(()=>{doc.hd=Object.assign({allow:true,button:true},doc.hd);doc.hd.button=!doc.hd.button});
   else if(m==='example'){if(confirm('Replace your current design with the example home? (You can undo this.)'))mutate(()=>{doc=sample();ui.floor=0;ui.sel=null})}
   else if(m==='empty'){if(confirm('Start over with two empty floors? (You can undo this.)'))mutate(()=>{const ents=doc.entities;doc=emptyHome();doc.entities=ents;ui.floor=0;ui.sel=null})}
 });
@@ -1841,7 +1843,7 @@ function buildFloor(fl,P,o){
 /* realistic look: sRGB colours, filmic tone mapping and soft studio reflections (RoomEnvironment) */
 function realR(r){r.outputEncoding=THREE.sRGBEncoding;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=.9}
 function envOf(r){if(r._env!==undefined)return r._env;let t=null;try{if(THREE.RoomEnvironment){const pm=new THREE.PMREMGenerator(r);t=pm.fromScene(new THREE.RoomEnvironment(),.04).texture;pm.dispose()}}catch(e){}
-  if(THREE.RGBELoader)new THREE.RGBELoader().load(`https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/${TQ}/kloofendal_48d_partly_cloudy_${TQ}.hdr`,h=>{try{const pm=new THREE.PMREMGenerator(r);r._env=pm.fromEquirectangular(h).texture;pm.dispose();h.dispose();refresh3D()}catch(e){}});
+  if(THREE.RGBELoader)new THREE.RGBELoader().load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_1k.hdr',h=>{try{const pm=new THREE.PMREMGenerator(r);r._env=pm.fromEquirectangular(h).texture;pm.dispose();h.dispose();refresh3D()}catch(e){}});
   return r._env=t}
 function linearize(root){root.traverse(x=>{
   if(x.isLight){if(!x.userData.lin){x.userData.lin=1;x.color.convertSRGBToLinear();if(x.groundColor)x.groundColor.convertSRGBToLinear()}return}
@@ -2015,18 +2017,48 @@ $('#rv').addEventListener('click',e=>{
   const[fi,rid]=v.split(':'),fl=doc.floors[+fi];if(!fl)return;const room=fl.rooms.find(r=>r.id===rid);if(!room)return;
   roomLights(fl.devices.filter(d=>{const r=roomAt(fl,d.x,d.y);return r&&mainOf(fl,r)===room&&isLamp(d)}))});
 
-/* ---------- Studio HD: ambient occlusion layered on the normal render ----------
-   The scene is drawn to the screen exactly as before (sun shadows, anti-aliasing, colours); SSAO is then
-   computed from a normals/depth pass and multiplied on top. */
-function fxOn(){if(V.fx!==undefined)return!!V.fx;V.fx=null;
-  try{if(!THREE.SSAOPass||!V.r.capabilities.isWebGL2)return false;
+/* ---------- HD quality ----------
+   On/off is chosen per device (✨ HD in the 3D bar, saved in this browser) and switches instantly.
+   Off by default in Home Assistant. Card option hd: true starts it on, hd: false turns it off on that card.
+   ⋯ → HD quality disables it for the whole design; ⋯ → HD button hides the button. */
+let hdNow=null,hdMem=null,_hdJs=0;
+function hdCard(){const v=(window.HOME3D_CONFIG||{}).hd;if(v===undefined||v===null||v==='')return null;return!(v===false||v===0||['off','false','no','0'].includes(String(v).toLowerCase()))}
+function hdAllowed(){return hdCard()!==false&&(doc.hd||{}).allow!==false}
+function hdWanted(){if(!hdAllowed())return false;let s=hdMem;if(s===null)try{s=localStorage.getItem('home3d-hq')}catch(e){}
+  return s===null?(hdCard()??HD_DEF):s==='1'}
+function hdSync(){const on=hdWanted(),first=hdNow===null;
+  if(on!==hdNow){hdNow=on;const fine=matchMedia('(pointer:fine)').matches;
+    HQ=on;TQ=on&&fine?'2k':'1k';FQ=on?(fine?4:2):1;PH=`https://dl.polyhaven.org/file/ph-assets/Textures/jpg/${TQ}/`;
+    if(on)hdScripts();
+    if(!first){/* drop textures made at the old quality; the house is rebuilt with new ones (photos swap in as they load) */
+      for(const k in floorTexture.c){const ft=floorTexture.c[k];for(const t of[ft.t,ft.n,ft.r])if(t)t.dispose()}floorTexture.c={};
+      for(const k of Object.keys(surfT)){delete surfT[k];if(surfM[k].length)surfLoad(k)}
+      if(_plaster!==undefined){_plaster=undefined;plasterN()}
+      if(V.cam&&!on){V.cam.far=500;V.cam.updateProjectionMatrix()}
+      if(V.r){V.r.setPixelRatio(Math.min(devicePixelRatio,HQ?2:1.5));size3D()}
+      V.sig=null;if(ui.view==='3d'&&V.root)requestAnimationFrame(()=>render3DView())}}
+  const b=$('#hqBtn');if(b){b.style.display=hdAllowed()&&(doc.hd||{}).button!==false?'':'none';b.classList.toggle('on',HQ)}
+  const a=$('#hdAllowL'),c=$('#hdBtnL');if(a)a.textContent=hdCard()===false?'off on this card':(doc.hd||{}).allow!==false?'allowed':'disabled';if(c)c.textContent=(doc.hd||{}).button!==false?'shown':'hidden'}
+$('#hqBtn').addEventListener('click',()=>{hdMem=HQ?'0':'1';try{localStorage.setItem('home3d-hq',hdMem)}catch(e){}hdSync();
+  flash(HQ?'✨ HD on (this device)':'HD off (this device)')});
+/* ambient-occlusion scripts load only when HD is first switched on */
+function hdScripts(){if(_hdJs||typeof THREE==='undefined')return;_hdJs=1;if(THREE.SSAOPass)return;
+  const L=['shaders/CopyShader','shaders/SSAOShader','math/SimplexNoise','postprocessing/EffectComposer','postprocessing/SSAOPass'];let i=0;
+  (function next(){if(i>=L.length){V.fx=undefined;draw3D();return}const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/'+L[i++]+'.js';s.onload=next;document.head.appendChild(s)})()}
+/* ambient occlusion layered on the normal render: the scene is drawn to the screen as usual (sun shadows,
+   anti-aliasing, colours); SSAO is computed from a normals/depth pass and multiplied on top */
+function fxOn(){if(V.fx!==undefined)return!!V.fx;if(typeof THREE.SSAOPass==='undefined'){hdScripts();return false}V.fx=null;
+  try{if(!V.r.capabilities.isWebGL2)return false;
     const sz=V.r.getDrawingBufferSize(new THREE.Vector2()),ssao=new THREE.SSAOPass(V.scene,V.cam,sz.x,sz.y);
     ssao.beautyRenderTarget.dispose();ssao.normalRenderTarget.depthTexture.type=THREE.UnsignedIntType;
     ssao.kernelRadius=.25;ssao.minDistance=.00002;ssao.maxDistance=.008;
-    const fs=ssao.ssaoMaterial.fragmentShader,k='gl_FragColor = vec4( vec3( 1.0 - occlusion ), 1.0 );';
-    if(fs.includes(k)){ssao.ssaoMaterial.fragmentShader=fs.replace(k,'gl_FragColor = vec4( vec3( pow( 1.0 - occlusion, 1.3 ) ), 1.0 );');ssao.ssaoMaterial.needsUpdate=true}
-    /* device icons, labels, glass and fake-shadow decals must not cast ambient occlusion */
-    ssao.overrideVisibility=function(){const c=this._visibilityCache;this.scene.traverse(o=>{c.set(o,o.visible);if(fxOverlay(o))o.visible=false})};
+    /* softer curve, and no shading where nothing was drawn (the sky/background) */
+    const fs=ssao.ssaoMaterial.fragmentShader,k='gl_FragColor = vec4( vec3( 1.0 - occlusion ), 1.0 );',kd='float depth = getDepth( vUv );';
+    if(fs.includes(k)&&fs.includes(kd)){ssao.ssaoMaterial.fragmentShader=fs.replace(k,'gl_FragColor = vec4( vec3( pow( 1.0 - occlusion, 1.3 ) ), 1.0 );')
+      .replace(kd,kd+' if( depth >= 0.9999 ) { gl_FragColor = vec4( 1.0 ); return; }');ssao.ssaoMaterial.needsUpdate=true}
+    /* device icons, labels, glass, fake-shadow decals and the big ground shadow catcher (bands at grazing angles) stay out of ambient occlusion */
+    ssao.overrideVisibility=function(){const c=this._visibilityCache;this.scene.traverse(o=>{c.set(o,o.visible);if(fxOverlay(o)||(o.material&&o.material.isShadowMaterial))o.visible=false})};
     V.fx={ssao}}catch(e){console.warn('HD effects off:',e);V.fx=null}
   return!!V.fx}
 function fxOverlay(o){const m=o.material;return o.isPoints||o.isLine||o.isSprite||!!(m&&!Array.isArray(m)&&!m.isShadowMaterial&&(m.transparent||m.isMeshBasicMaterial))}
@@ -2037,6 +2069,7 @@ function fxDraw(){const r=V.r,s=V.fx.ssao,u=s.ssaoMaterial.uniforms,sc=V.scene,o
   sc.traverse(o=>{if(!o.visible)return;if(fxOverlay(o))over.push(o);else if(o.isMesh)solid.push(o)});
   /* 1. the house without icons, labels and glass */
   for(const o of over)o.visible=false;r.render(sc,V.cam);
+  /* 2. ambient occlusion multiplied on top */
   s.scene=V.scene;s.camera=V.cam;u.cameraNear.value=V.cam.near;u.cameraFar.value=V.cam.far;
   u.cameraProjectionMatrix.value.copy(V.cam.projectionMatrix);u.cameraInverseProjectionMatrix.value.copy(V.cam.projectionMatrixInverse);
   s.overrideVisibility();s.renderOverride(r,s.normalMaterial,s.normalRenderTarget,0x7777ff,1);s.restoreVisibility();
@@ -2046,11 +2079,6 @@ function fxDraw(){const r=V.r,s=V.fx.ssao,u=s.ssaoMaterial.uniforms,sc=V.scene,o
   /* 3. icons, labels and glass on top, depth-tested against the house */
   for(const o of over)o.visible=true;for(const o of solid)o.visible=false;const bg=sc.background,ac=r.autoClear;sc.background=null;r.autoClear=false;
   try{r.render(sc,V.cam)}finally{for(const o of solid)o.visible=true;sc.background=bg;r.autoClear=ac}}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-hq]');if(!b)return;
-  try{localStorage.setItem('home3d-hq',HQ?'0':'1');if(ui.view==='3d')sessionStorage.setItem('home3d-3d','1')}catch(err){}location.reload()});
-/* after the HD switch reloads the page, come back to the 3D view */
-try{if(sessionStorage.getItem('home3d-3d')){sessionStorage.removeItem('home3d-3d');ui.view='3d'}}catch(e){}
-{const b=document.querySelector('[data-hq]');if(b)b.classList.toggle('on',HQ)}
 
 /* ---------- export ---------- */
 function svgFile(fl,P,ex){return`<svg xmlns="http://www.w3.org/2000/svg" width="${fl.w*K}" height="${fl.h*K}" viewBox="0 0 ${fl.w*K} ${fl.h*K}">${renderInner(fl,P,{grid:false,devices:false,area:ex.area,idp:'x'})}</svg>\n`}
