@@ -11,7 +11,7 @@ Free, in your browser, no sign-up.
 
 - **Draw floor plans.** Add rooms, doors, windows, stairs and several floors. Walls snap into place.
 - **See it in 3D instantly.** Orbit around, cut the walls to look inside, explode the floors, or turn on night mode.
-- **Furnish it.** Kitchens, beds, sofas, dining sets, ceiling fans, pools and gates, with wood finishes and colors.
+- **Furnish it.** Kitchens, beds, sofas, dining sets, ceiling fans, pools, gates and a home gym (pull-up station, multi-gym, squat rack, dumbbells, rubber floor), with wood finishes and colors.
 - **Plan a smart home.** Place lights, switches, ACs, curtains, speakers and cameras, and try them in Preview mode.
 - **HD realism (Studio only).** Full-resolution rendering, 2K photo textures, crisp tiles and ambient occlusion (soft shading in corners and under furniture). Turn it off with **✨ HD** in the 3D bar if a device feels slow.
 - **Keep your work.** Designs save in your browser automatically. Use **⋯ → Save design file** to download a copy and open it on another device.
