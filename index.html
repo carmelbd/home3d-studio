@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Home 3D Studio</title>
+<meta name="description" content="Draw your home in 2D, walk through it in 3D, and plan where every light, switch and camera goes. Free, in your browser, no sign-up.">
+<meta property="og:title" content="Home 3D Studio">
+<meta property="og:description" content="Draw your home in 2D and walk through it in 3D. Free, in your browser.">
+<meta property="og:image" content="img/3d-realistic.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--border:#e1e5eb;--text:#161c27;--muted:#5d6676;--accent:#2f6fed;--accent-soft:#e7eefd;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0c0f14;--panel:#141920;--border:#262e39;--text:#e8edf4;--muted:#939cad;--accent:#5b8cff;--accent-soft:#1c2945;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+nav b{font-size:18px}
+nav a{color:var(--muted);text-decoration:none;font-size:15px;margin-left:18px}
+nav a:hover{color:var(--text)}
+.hero{display:grid;grid-template-columns:1fr 1.15fr;gap:48px;align-items:center;padding:48px 0 64px}
+h1{font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-.02em;margin:0 0 18px}
+.lead{font-size:19px;color:var(--muted);margin:0 0 28px;max-width:34em}
+.cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-block;padding:13px 22px;border-radius:10px;font-weight:600;text-decoration:none;border:1px solid var(--border);color:var(--text);background:var(--panel)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:hover{filter:brightness(1.06)}
+.note{font-size:14px;color:var(--muted);margin-top:14px}
+.shot{width:100%;border-radius:14px;border:1px solid var(--border);box-shadow:0 20px 50px -20px rgba(0,0,0,.35);display:block}
+h2{font-size:28px;letter-spacing:-.01em;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px}
+section{padding:56px 0;border-top:1px solid var(--border)}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px}
+.card .ic{font-size:26px}
+.card h3{margin:8px 0 6px;font-size:17px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.gallery figure{margin:0}
+.gallery figcaption{font-size:14px;color:var(--muted);margin-top:8px}
+.steps{counter-reset:s;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:0;list-style:none;margin:0}
+.steps li{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px}
+.steps li::before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;margin-bottom:10px}
+.steps b{display:block;margin-bottom:4px}
+.steps span{color:var(--muted);font-size:15px}
+.ha{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px}
+.ha p{margin:0;color:var(--muted)}
+footer{padding:32px 0 48px;color:var(--muted);font-size:14px;border-top:1px solid var(--border)}
+@media (max-width:860px){.hero,.ha{grid-template-columns:1fr}.hero{gap:32px;padding-top:24px}.features,.steps,.gallery{grid-template-columns:1fr}nav a.hide-sm{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><b>🏠 Home 3D Studio</b><div><a class="hide-sm" href="#how">How it works</a><a class="hide-sm" href="https://github.com/carmelbd/ha-home-3d">Home Assistant</a><a href="app/">Open designer</a></div></nav>
+
+  <div class="hero">
+    <div>
+      <h1>Draw your home.<br>Walk through it in 3D.</h1>
+      <p class="lead">Sketch your rooms from above, drop in furniture, and see the whole place in 3D in seconds. Plan where every light, switch, AC and camera goes, before anyone drills a hole.</p>
+      <div class="cta"><a class="btn primary" href="app/">Start designing — free</a><a class="btn" href="app/#3d">See an example home in 3D</a></div>
+      <p class="note">Runs in your browser. No sign-up, no download. Your design stays on your device.</p>
+    </div>
+    <img class="shot" src="img/3d-realistic.jpg" alt="A home designed in Home 3D Studio, shown in 3D">
+  </div>
+</div>
+
+<section><div class="wrap">
+  <h2>Everything you need to plan a home</h2>
+  <p class="sub">Whether you are renovating, moving in, or planning a smart home.</p>
+  <div class="features">
+    <div class="card"><div class="ic">📐</div><h3>2D floor plans</h3><p>Draw rooms to the centimeter, add doors, windows, stairs and several floors. Walls snap into place.</p></div>
+    <div class="card"><div class="ic">🧊</div><h3>Instant 3D</h3><p>Orbit around your home, cut the walls to look inside, switch to night mode and see the lights.</p></div>
+    <div class="card"><div class="ic">🛋️</div><h3>Furniture & finishes</h3><p>Kitchens, beds, sofas, dining sets, pools and gates, with wood finishes and colors you choose.</p></div>
+    <div class="card"><div class="ic">💡</div><h3>Smart-home planning</h3><p>Place lights, switches, ACs, fans, curtains, speakers and cameras, and try them in Preview mode.</p></div>
+    <div class="card"><div class="ic">💾</div><h3>Save & move devices</h3><p>Download your design as a file and open it on any computer, phone or tablet.</p></div>
+    <div class="card"><div class="ic">🏡</div><h3>Ready for Home Assistant</h3><p>Already have one? The same plan becomes a live 3D dashboard that controls your home.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>See it in action</h2>
+  <p class="sub">Real homes built with the designer.</p>
+  <div class="gallery">
+    <figure><img class="shot" src="img/2d-editor.jpg" alt="2D floor plan editor" loading="lazy"><figcaption>The 2D editor: rooms, furniture and devices.</figcaption></figure>
+    <figure><img class="shot" src="img/kitchen.jpg" alt="Kitchen in 3D" loading="lazy"><figcaption>Kitchens, islands and finishes in 3D.</figcaption></figure>
+    <figure><img class="shot" src="img/3d-night.jpg" alt="Home at night in 3D" loading="lazy"><figcaption>Night mode shows every light you planned.</figcaption></figure>
+    <figure><img class="shot" src="img/new-items.jpg" alt="Ceiling fans, lamps and wall ACs" loading="lazy"><figcaption>Ceiling fans, lamps, wall ACs and more.</figcaption></figure>
+  </div>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <h2>How it works</h2>
+  <p class="sub">Three steps, a few minutes.</p>
+  <ol class="steps">
+    <li><b>Draw the rooms</b><span>Start empty or from the example home. Drag out each room and set its size.</span></li>
+    <li><b>Furnish and plan</b><span>Add furniture, doors and windows, then the lights and smart devices you want.</span></li>
+    <li><b>Look around in 3D</b><span>Switch to 3D, walk through it, and save the design file to keep or share.</span></li>
+  </ol>
+</div></section>
+
+<section><div class="wrap">
+  <div class="ha">
+    <div><h2>Have Home Assistant?</h2><p>Install the free Home 3D card through HACS and your plan becomes a live dashboard: tap a lamp in 3D to turn it on, see who's home, watch the cameras.</p></div>
+    <a class="btn" href="https://github.com/carmelbd/ha-home-3d">Get the card on GitHub</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">Home 3D Studio · free and open source · <a href="https://github.com/carmelbd/home3d-studio">GitHub</a></div></footer>
+</body>
+</html>
