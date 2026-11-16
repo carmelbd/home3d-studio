@@ -13,6 +13,7 @@ Free, in your browser, no sign-up.
 - **See it in 3D instantly.** Orbit around, cut the walls to look inside, explode the floors, or turn on night mode.
 - **Furnish it.** Kitchens, beds, sofas, dining sets, ceiling fans, pools and gates, with wood finishes and colors.
 - **Plan a smart home.** Place lights, switches, ACs, curtains, speakers and cameras, and try them in Preview mode.
+- **HD realism (Studio only).** Full-resolution rendering, 2K photo textures, crisp tiles and ambient occlusion (soft shading in corners and under furniture). Turn it off with **✨ HD** in the 3D bar if a device feels slow.
 - **Keep your work.** Designs save in your browser automatically. Use **⋯ → Save design file** to download a copy and open it on another device.
 
 ## Have Home Assistant?
@@ -30,7 +31,7 @@ This repo is the public website:
 | --- | --- |
 | `index.html` | The landing page |
 | `app/index.html` | The designer in web mode. **Built, do not edit by hand.** |
-| `build.py` | Copies the designer from ha-home-3d and switches it to web mode |
+| `build.py` | Copies the designer from ha-home-3d, switches it to web mode and adds the HD renderer |
 | `img/` | Screenshots |
 
 To update the site after a designer change:
