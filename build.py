@@ -84,7 +84,9 @@ function fxDraw(){const r=V.r,s=V.fx.ssao,u=s.ssaoMaterial.uniforms,sc=V.scene,o
   for(const o of over)o.visible=true;for(const o of solid)o.visible=false;const bg=sc.background,ac=r.autoClear;sc.background=null;r.autoClear=false;
   try{r.render(sc,V.cam)}finally{for(const o of solid)o.visible=true;sc.background=bg;r.autoClear=ac}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-hq]');if(!b)return;
-  try{localStorage.setItem('home3d-hq',HQ?'0':'1')}catch(err){}location.reload()});
+  try{localStorage.setItem('home3d-hq',HQ?'0':'1');if(ui.view==='3d')sessionStorage.setItem('home3d-3d','1')}catch(err){}location.reload()});
+/* after the HD switch reloads the page, come back to the 3D view */
+try{if(sessionStorage.getItem('home3d-3d')){sessionStorage.removeItem('home3d-3d');ui.view='3d'}}catch(e){}
 {const b=document.querySelector('[data-hq]');if(b)b.classList.toggle('on',HQ)}
 
 /* ---------- export ---------- */""")
